@@ -55,6 +55,7 @@ set(ALL_INDEXING_SRCS
         test_binaryivf.cpp
         test_bruteforce.cpp
         test_hnsw.cpp
+        test_hnsw_sift.cpp
         test_idmap.cpp
         test_ivf.cpp
         test_ivf_nm.cpp

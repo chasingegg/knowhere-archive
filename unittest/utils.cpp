@@ -20,9 +20,52 @@
 #include "knowhere/utils/BitsetView.h"
 #include "unittest/utils.h"
 
+template <typename T>
+knowhere::DatasetPtr
+DataGen::read_vecs(const std::string& filename, std::vector<T> &data, uint32_t &nx, uint32_t &dim) {
+    std::ifstream fs(filename.c_str(), std::ios::binary);
+    fs.read((char*)&dim, 4);
+    fs.seekg(0, std::ios::end);
+    nx = fs.tellg() / (dim + 1) / 4;
+    fs.seekg(0, std::ios::beg);
+    data.resize(nx * dim);
+    std::cout << "Read path: " << filename << ", nx: " << nx << ", dim: " << dim << std::endl;
+    auto buf = std::make_unique<T[]>(dim);
+    for (int i = 0; i < nx; ++i) {
+        fs.seekg(4, std::ios::cur);
+        fs.read((char*)(data.data() + i * dim), dim * sizeof(float));
+    }
+
+    auto ret_ds = std::make_shared<knowhere::Dataset>();
+    SetDatasetRows(ret_ds, nx);
+    SetDatasetDim(ret_ds, dim);
+    SetDatasetTensor(ret_ds, data.data());
+    return ret_ds;
+}
+
 void
 DataGen::Init_with_default(const bool is_binary) {
     Generate(dim, nb, nq, is_binary);
+}
+
+void
+DataGen::Init_with_input(const std::string& base_dir, const std::string& type) {
+    uint32_t nb_32, dim_32;
+    base_dataset  = read_vecs<float>(std::filesystem::path(base_dir) / type / (type + "_base.fvecs"), xb, nb_32, dim_32);
+
+    uint32_t nq_32;
+    query_dataset = read_vecs<float>(std::filesystem::path(base_dir) / type / (type + "_query.fvecs"), xq, nq_32, dim_32);
+
+    uint32_t nr_32, top_k_32;
+    result_dataset = read_vecs<int32_t>(std::filesystem::path(base_dir) / type / (type + "_groundtruth.ivecs"), xr, nr_32, top_k_32);
+
+    k = top_k_32;
+    top_k = top_k_32;
+
+    nb = nb_32;
+    dim = dim_32;
+    nq = nq_32;
+    nr = nr_32;
 }
 
 void

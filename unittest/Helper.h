@@ -30,8 +30,8 @@
 constexpr int DEVICE_ID = 0;
 constexpr int64_t DIM = 128;
 constexpr int64_t NB = 10000;
-constexpr int64_t NQ = 10;
-constexpr int64_t K = 10;
+constexpr int64_t NQ = 100;
+constexpr int64_t K = 100;
 constexpr int64_t PINMEM = 1024 * 1024 * 200;
 constexpr int64_t TEMPMEM = 1024 * 1024 * 300;
 constexpr int64_t RESNUM = 2;

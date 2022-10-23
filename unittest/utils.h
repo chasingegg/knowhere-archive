@@ -26,10 +26,16 @@ class DataGen {
     DataGen() {
         knowhere::KnowhereConfig::SetSimdType(knowhere::KnowhereConfig::SimdType::AUTO);
     }
+    template <typename T>
+    knowhere::DatasetPtr
+    read_vecs(const std::string& filename, std::vector<T> &data, uint32_t &nx, uint32_t &dim);
 
  protected:
     void
     Init_with_default(const bool is_binary = false);
+
+    void
+    Init_with_input(const std::string& base_dir, const std::string& type);
 
     void
     Generate(const int dim, const int nb, const int nq, const bool is_binary = false);
@@ -37,17 +43,21 @@ class DataGen {
  protected:
     int nb = 10000;
     int nq = 10;
+    int nr = 100;
     int dim = 128;
-    int k = 10;
+    int k = 100;
+    int top_k = 100;
     int buffer_size = 16384;
     float radius = 2.8;
     std::vector<float> xb;
     std::vector<float> xq;
+    std::vector<int32_t> xr;
     std::vector<uint8_t> xb_bin;
     std::vector<uint8_t> xq_bin;
     std::vector<int64_t> ids;
     knowhere::DatasetPtr base_dataset = nullptr;
     knowhere::DatasetPtr query_dataset = nullptr;
+    knowhere::DatasetPtr result_dataset = nullptr;
     knowhere::DatasetPtr id_dataset = nullptr;
 
     std::vector<uint8_t> bitset_data;

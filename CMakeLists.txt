@@ -246,6 +246,7 @@ if ( BUILD_COVERAGE STREQUAL "ON" )
                            )
 endif ()
 
+set(KNOWHERE_BUILD_TESTS ON)
 add_subdirectory( knowhere/utils )
 add_subdirectory( thirdparty )
 add_subdirectory( knowhere )

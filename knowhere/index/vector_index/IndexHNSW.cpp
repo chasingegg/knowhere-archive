@@ -96,7 +96,7 @@ IndexHNSW::AddWithoutIds(const DatasetPtr& dataset_ptr, const Config& config) {
     utils::SetBuildOmpThread(config);
     index_->addPoint(p_data, 0);
 
-#pragma omp parallel for
+//#pragma omp parallel for
     for (int i = 1; i < rows; ++i) {
         index_->addPoint((reinterpret_cast<const float*>(p_data) + Dim() * i), i);
     }
@@ -254,7 +254,7 @@ IndexHNSW::QueryImpl(int64_t n,
     hnswlib::SearchParam param{ef};
     bool transform = (index_->metric_type_ == 1);  // InnerProduct: 1
 
-#pragma omp parallel for
+//#pragma omp parallel for
     for (unsigned int i = 0; i < n; ++i) {
         auto single_query = xq + i * Dim();
         std::priority_queue<std::pair<float, hnswlib::labeltype>> rst;
@@ -309,7 +309,7 @@ IndexHNSW::QueryByRangeImpl(int64_t n,
     std::vector<size_t> result_size(n);
     std::vector<size_t> result_lims(n + 1);
 
-#pragma omp parallel for
+//#pragma omp parallel for
     for (unsigned int i = 0; i < n; ++i) {
         auto single_query = xq + i * Dim();
 
