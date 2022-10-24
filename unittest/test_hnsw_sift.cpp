@@ -30,7 +30,7 @@ class HNSWSiftTest : public DataGen, public TestWithParam<std::string> {
  protected:
     void
     SetUp() override {
-        Init_with_input("/Users/xianliang/Work/Code/cardinal/tests/data", "siftsmall");
+        Init_with_input("/home/liang/data", "siftsmall");
         conf_ = ParamGenerator::GetInstance().Gen(index_type_);
         index_ = std::make_shared<knowhere::IndexHNSW>();
     }
