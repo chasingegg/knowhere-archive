@@ -50,14 +50,15 @@ DataGen::Init_with_default(const bool is_binary) {
 
 void
 DataGen::Init_with_input(const std::string& base_dir, const std::string& type) {
+    const std::string prefix = base_dir + "/" + type + "/" + type;
     uint32_t nb_32, dim_32;
-    base_dataset  = read_vecs<float>(std::filesystem::path(base_dir) / type / (type + "_base.fvecs"), xb, nb_32, dim_32);
+    base_dataset  = read_vecs<float>(prefix + "_base.fvecs", xb, nb_32, dim_32);
 
     uint32_t nq_32;
-    query_dataset = read_vecs<float>(std::filesystem::path(base_dir) / type / (type + "_query.fvecs"), xq, nq_32, dim_32);
+    query_dataset = read_vecs<float>(prefix + "_query.fvecs", xq, nq_32, dim_32);
 
     uint32_t nr_32, top_k_32;
-    result_dataset = read_vecs<int32_t>(std::filesystem::path(base_dir) / type / (type + "_groundtruth.ivecs"), xr, nr_32, top_k_32);
+    result_dataset = read_vecs<int32_t>(prefix + "_groundtruth.ivecs", xr, nr_32, top_k_32);
 
     k = top_k_32;
     top_k = top_k_32;
