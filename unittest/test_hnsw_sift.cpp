@@ -76,7 +76,8 @@ TEST_P(HNSWSiftTest, HNSWSift_basic) {
     std::chrono::steady_clock::time_point query_begin = std::chrono::steady_clock::now();
     auto result = index_->Query(query_dataset, conf_, nullptr);
     std::chrono::steady_clock::time_point query_end = std::chrono::steady_clock::now();
-    std::cout << "build cost = "
+    std::cout << "nq = " << nq
+              << "query cost = "
               << std::chrono::duration_cast<std::chrono::microseconds>(build_end - build_begin).count() / 1000 / nq << "[ms]"
               << std::endl;
 
