@@ -24,7 +24,7 @@
 class DataGen {
  public:
     DataGen() {
-        knowhere::KnowhereConfig::SetSimdType(knowhere::KnowhereConfig::SimdType::AUTO);
+        knowhere::KnowhereConfig::SetSimdType(knowhere::KnowhereConfig::SimdType::GENERIC);
     }
     template <typename T>
     knowhere::DatasetPtr
