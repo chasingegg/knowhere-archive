@@ -30,7 +30,7 @@ class HNSWSiftTest : public DataGen, public TestWithParam<std::string> {
  protected:
     void
     SetUp() override {
-        Init_with_input("/home/liang/data", "siftsmall");
+        Init_with_input("/Users/xianliang/Work/Code/cardinal/tests/data", "siftsmall");
         conf_ = ParamGenerator::GetInstance().Gen(index_type_);
         index_ = std::make_shared<knowhere::IndexHNSW>();
     }
@@ -78,7 +78,7 @@ TEST_P(HNSWSiftTest, HNSWSift_basic) {
     std::chrono::steady_clock::time_point query_end = std::chrono::steady_clock::now();
     std::cout << "nq = " << nq << std::endl
               << "query cost = "
-              << std::chrono::duration_cast<std::chrono::microseconds>(build_end - build_begin).count() / 1000 / nq << "[ms]"
+              << std::chrono::duration_cast<std::chrono::microseconds>(query_end - query_begin).count() / nq  << "[us]"
               << std::endl;
 
     auto res_ids = knowhere::GetDatasetIDs(result);
