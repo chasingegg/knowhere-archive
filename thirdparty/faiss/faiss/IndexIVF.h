@@ -260,7 +260,7 @@ struct IndexIVF : Index, Level1Quantizer {
             idx_t* labels,
             const BitsetView bitset = nullptr) const override;
 
-    void search_thread_safe(
+    virtual void search_thread_safe(
             idx_t n,
             const float* x,
             idx_t k,

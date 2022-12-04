@@ -22,6 +22,7 @@
 #include "index/vector_index/IndexHNSW.h"
 #include "index/vector_index/IndexIDMAP.h"
 #include "index/vector_index/IndexIVFPQ.h"
+#include "index/vector_index/IndexIVFPQFastScan.h"
 #include "index/vector_index/IndexIVFSQ.h"
 #include "index/vector_offset_index/IndexIVF_NM.h"
 
@@ -52,6 +53,8 @@ VecIndexFactory::CreateVecIndex(const IndexType& type, const IndexMode mode) {
                 return std::make_shared<VecIndexThreadPoolWrapper>(std::make_unique<IVF_NM>());
             } else if (type == IndexEnum::INDEX_FAISS_IVFPQ) {
                 return std::make_shared<VecIndexThreadPoolWrapper>(std::make_unique<IVFPQ>());
+            } else if (type == IndexEnum::INDEX_FAISS_IVFPQFASTSCAN) {
+                return std::make_shared<VecIndexThreadPoolWrapper>(std::make_unique<IVFPQFASTSCAN>());
             } else if (type == IndexEnum::INDEX_FAISS_IVFSQ8) {
                 return std::make_shared<VecIndexThreadPoolWrapper>(std::make_unique<IVFSQ>());
             } else if (type == IndexEnum::INDEX_ANNOY) {

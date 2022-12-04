@@ -27,6 +27,7 @@ constexpr const char* INDEX_FAISS_BIN_IVFFLAT = "BIN_IVF_FLAT";
 constexpr const char* INDEX_FAISS_IDMAP = "FLAT";
 constexpr const char* INDEX_FAISS_IVFFLAT = "IVF_FLAT";
 constexpr const char* INDEX_FAISS_IVFPQ = "IVF_PQ";
+constexpr const char* INDEX_FAISS_IVFPQFASTSCAN = "IVF_PQ_FASTSCAN";
 constexpr const char* INDEX_FAISS_IVFSQ8 = "IVF_SQ8";
 
 constexpr const char* INDEX_ANNOY = "ANNOY";

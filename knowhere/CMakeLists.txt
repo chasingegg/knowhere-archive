@@ -48,6 +48,7 @@ set(vector_index_srcs
         index/vector_index/IndexIDMAP.cpp
         index/vector_index/IndexIVF.cpp
         index/vector_index/IndexIVFPQ.cpp
+        index/vector_index/IndexIVFPQFastScan.cpp
         index/vector_index/IndexIVFSQ.cpp
         index/vector_index/IndexAnnoy.cpp
         index/vector_index/IndexHNSW.cpp
