@@ -99,6 +99,20 @@ class ParamGenerator {
                 {knowhere::indexparam::M, 4},
                 {knowhere::indexparam::NBITS, 8},
             };
+        } else if (type == knowhere::IndexEnum::INDEX_FAISS_IVFPQFASTSCAN) {
+            return knowhere::Config{
+                {knowhere::meta::METRIC_TYPE, knowhere::metric::L2},
+                {knowhere::meta::DIM, DIM},
+                {knowhere::meta::TOPK, K},
+                {knowhere::meta::DEVICE_ID, DEVICE_ID},
+                {knowhere::meta::BUILD_INDEX_OMP_NUM, BUILD_INDEX_OMP_NUM},
+                {knowhere::meta::QUERY_OMP_NUM, QUERY_OMP_NUM},
+                {knowhere::indexparam::NLIST, 16},
+                {knowhere::indexparam::NPROBE, 8},
+                {knowhere::indexparam::M, 2},
+                {knowhere::indexparam::NBITS, 4},
+                {knowhere::indexparam::REORDER_K, 100},
+            };
         } else if (type == knowhere::IndexEnum::INDEX_FAISS_IVFSQ8) {
             return knowhere::Config{
                 {knowhere::meta::METRIC_TYPE, knowhere::metric::L2},

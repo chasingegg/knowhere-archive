@@ -511,7 +511,7 @@ static void knn_jaccard_blas(
 /*******************************************************
  * KNN driver functions
  *******************************************************/
-int distance_compute_blas_threshold = 16384;
+int distance_compute_blas_threshold = 20;
 int distance_compute_blas_query_bs = 4096;
 int distance_compute_blas_database_bs = 1024;
 int distance_compute_min_k_reservoir = 100;

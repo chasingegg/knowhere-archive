@@ -8,6 +8,7 @@
 #include <faiss/IndexRefine.h>
 
 #include <faiss/IndexFlat.h>
+#include <faiss/IndexIVF.h>
 #include <faiss/impl/AuxIndexStructures.h>
 #include <faiss/impl/FaissAssert.h>
 #include <faiss/utils/Heap.h>
@@ -243,6 +244,61 @@ void IndexRefineFlat::search(
 
     base_index->search(n, x, k_base, base_distances, base_labels);
 
+    for (int i = 0; i < n * k_base; i++)
+        assert(base_labels[i] >= -1 && base_labels[i] < ntotal);
+
+    // compute refined distances
+    auto rf = dynamic_cast<const IndexFlat*>(refine_index);
+    FAISS_THROW_IF_NOT(rf);
+
+    rf->compute_distance_subset(n, x, k_base, base_distances, base_labels);
+
+    // sort and store result
+    if (metric_type == METRIC_L2) {
+        typedef CMax<float, idx_t> C;
+        reorder_2_heaps<C>(
+                n, k, labels, distances, k_base, base_labels, base_distances);
+
+    } else if (metric_type == METRIC_INNER_PRODUCT) {
+        typedef CMin<float, idx_t> C;
+        reorder_2_heaps<C>(
+                n, k, labels, distances, k_base, base_labels, base_distances);
+    } else {
+        FAISS_THROW_MSG("Metric type not supported");
+    }
+}
+
+void IndexRefineFlat::search_thread_safe(
+        idx_t n,
+        const float* x,
+        idx_t k,
+        float* distances,
+        idx_t* labels,
+        const size_t nprobe,
+        const int parallel_mode,
+        const size_t max_codes,
+        const size_t reorder_k,
+        const BitsetView bitset) const {
+    FAISS_THROW_IF_NOT(k > 0);
+
+    FAISS_THROW_IF_NOT(is_trained);
+    idx_t k_base = idx_t(reorder_k);
+    FAISS_THROW_IF_NOT(k_base >= k);
+    idx_t* base_labels = labels;
+    float* base_distances = distances;
+    ScopeDeleter<idx_t> del1;
+    ScopeDeleter<float> del2;
+
+    if (k != k_base) {
+        base_labels = new idx_t[n * k_base];
+        del1.set(base_labels);
+        base_distances = new float[n * k_base];
+        del2.set(base_distances);
+    }
+    auto base = dynamic_cast<const IndexIVF*>(base_index);
+
+    FAISS_THROW_IF_NOT(base);
+    base->search_thread_safe(n, x, k_base, base_distances, base_labels, nprobe, parallel_mode, max_codes, bitset);
     for (int i = 0; i < n * k_base; i++)
         assert(base_labels[i] >= -1 && base_labels[i] < ntotal);
 

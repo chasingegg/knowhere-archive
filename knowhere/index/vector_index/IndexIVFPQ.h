@@ -14,41 +14,81 @@
 #include <memory>
 #include <utility>
 
-#include "knowhere/index/vector_index/IndexIVF.h"
-
+#include <faiss/IndexIVFPQFastScan.h>
+#include <faiss/IndexRefine.h>
+#include "knowhere/index/VecIndex.h"
+#include "knowhere/common/ThreadPool.h"
 namespace knowhere {
 
-class IVFPQ : public IVF {
+class IVFPQ : public VecIndex {
  public:
-    IVFPQ() : IVF() {
+    IVFPQ() {
         index_type_ = IndexEnum::INDEX_FAISS_IVFPQ;
-        stats = std::make_shared<IVFStatistics>(index_type_);
+        pool_ = ThreadPool::GetGlobalThreadPool();
     }
 
-    explicit IVFPQ(std::shared_ptr<faiss::Index> index) : IVF(std::move(index)) {
-        index_type_ = IndexEnum::INDEX_FAISS_IVFPQ;
-        stats = std::make_shared<IVFStatistics>(index_type_);
-    }
+    IVFPQ(const IVFPQ& index_ivfpq) = delete;
 
-    DatasetPtr
-    GetVectorById(const DatasetPtr& dataset, const Config& config) override {
-        KNOWHERE_THROW_MSG("GetVectorById not supported yet");
-    }
+    IVFPQ&
+    operator=(const IVFPQ& index_ivfpq) = delete;
+
+    IVFPQ(IVFPQ&& index_ivfpq) noexcept = default;
+
+    IVFPQ&
+    operator=(IVFPQ&& index_ivfpq) noexcept = default;
+
+    BinarySet
+    Serialize(const Config&) override;
+
+    void
+    Load(const BinarySet&) override;
 
     void
     Train(const DatasetPtr&, const Config&) override;
 
-    VecIndexPtr
-    CopyCpuToGpu(const int64_t, const Config&) override;
+    void
+    AddWithoutIds(const DatasetPtr&, const Config&) override;
+
+    DatasetPtr
+    GetVectorById(const DatasetPtr&, const Config&) override;
+
+    DatasetPtr
+    Query(const DatasetPtr&, const Config&, const faiss::BitsetView) override;
+
+   //  DatasetPtr
+   //  QueryByRange(const DatasetPtr&, const Config&, const faiss::BitsetView) override;
+
+   //  DatasetPtr
+   //  GetIndexMeta(const Config&) override;
+
+    int64_t
+    Count() override;
+
+    int64_t
+    Dim() override;
 
     int64_t
     Size() override;
 
- protected:
+    VecIndexPtr
+    CopyCpuToGpu(const int64_t, const Config&);
+
+ private:
     std::shared_ptr<faiss::IVFSearchParameters>
-    GenParams(const Config& config) override;
+    GenParams(const Config& config);
+
+    void
+    QueryImpl(int64_t, const float*, int64_t, float*, int64_t*, const Config&, const faiss::BitsetView);
+
+   //  void
+   //  QueryByRangeImpl(int64_t, const float*, float*&, int64_t*&, size_t*&, const Config&, const faiss::BitsetView);
+
+
+ private:
+    std::shared_ptr<ThreadPool> pool_;
+    std::unique_ptr<faiss::IndexRefineFlat> index_;
 };
 
-using IVFPQPtr = std::shared_ptr<IVFPQ>;
+// using IVFPQPtr = std::shared_ptr<IVFPQ>;
 
 }  // namespace knowhere

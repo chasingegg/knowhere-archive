@@ -38,6 +38,7 @@ typedef uint64_t size_t;
 #include <index/vector_index/IndexIVF.h>
 #include <index/vector_index/IndexIVFSQ.h>
 #include <index/vector_index/IndexIVFPQ.h>
+#include <index/vector_index/IndexIVFPQFastScan.h>
 #include <index/vector_index/IndexBinaryIVF.h>
 #include <unittest/AsyncIndex.h>
 #ifdef KNOWHERE_WITH_DISKANN
@@ -98,6 +99,7 @@ import_array();
 %include <index/vector_index/IndexIVF.h>
 %include <index/vector_index/IndexIVFSQ.h>
 %include <index/vector_index/IndexIVFPQ.h>
+%include <index/vector_index/IndexIVFPQFastScan.h>
 %include <index/vector_index/IndexIDMAP.h>
 %include <index/vector_index/IndexBinaryIDMAP.h>
 %include <index/vector_index/IndexBinaryIVF.h>

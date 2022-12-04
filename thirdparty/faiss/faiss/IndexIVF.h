@@ -69,7 +69,8 @@ struct IVFSearchParameters {
     size_t max_codes; ///< max nb of codes to visit to do a query
     int parallel_mode; // default value if -1, and we will use
                        // this->parallel_mode in this case
-    IVFSearchParameters() : nprobe(1), max_codes(0), parallel_mode(-1) {}
+    int reorder_k;
+    IVFSearchParameters() : nprobe(1), max_codes(0), parallel_mode(-1), reorder_k(1) {}
     virtual ~IVFSearchParameters() {}
 };
 
@@ -260,7 +261,7 @@ struct IndexIVF : Index, Level1Quantizer {
             idx_t* labels,
             const BitsetView bitset = nullptr) const override;
 
-    void search_thread_safe(
+    virtual void search_thread_safe(
             idx_t n,
             const float* x,
             idx_t k,

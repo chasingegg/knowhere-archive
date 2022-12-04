@@ -26,8 +26,8 @@ SetBuildOmpThread(const Config& conf) {
 
 inline void
 SetQueryOmpThread(const Config& conf) {
-    int32_t omp_num =
-        CheckKeyInConfig(conf, meta::QUERY_OMP_NUM) ? GetMetaQueryOmpNum(conf) : omp_get_max_threads();
+    int32_t omp_num = 1;
+        // CheckKeyInConfig(conf, meta::QUERY_OMP_NUM) ? GetMetaQueryOmpNum(conf) : omp_get_max_threads();
     omp_set_num_threads(omp_num);
 }
 

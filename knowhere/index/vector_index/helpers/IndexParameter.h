@@ -49,6 +49,7 @@ constexpr const char* NLIST = "nlist";
 constexpr const char* NBITS = "nbits";  // PQ/SQ
 constexpr const char* M = "m";          // PQ param for IVFPQ
 constexpr const char* PQ_M = "PQM";     // PQ param for RHNSWPQ
+constexpr const char* REORDER_K = "reorder_k"; // Reorder param for IVFPQFastScan
 // HNSW Params
 constexpr const char* EFCONSTRUCTION = "efConstruction";
 constexpr const char* HNSW_M = "M";
@@ -146,6 +147,9 @@ DEFINE_CONFIG_SETTER(SetIndexParamNbits, indexparam::NBITS, int64_t)
 // PQ param for IVFPQ
 DEFINE_CONFIG_GETTER(GetIndexParamM, indexparam::M, int64_t)
 DEFINE_CONFIG_SETTER(SetIndexParamM, indexparam::M, int64_t)
+
+DEFINE_CONFIG_GETTER(GetIndexParamReorderK, indexparam::REORDER_K, int64_t)
+DEFINE_CONFIG_SETTER(SetIndexParamReorderK, indexparam::REORDER_K, int64_t)
 
 // PQ param for RHNSWPQ
 DEFINE_CONFIG_GETTER(GetIndexParamPQM, indexparam::PQ_M, int64_t)

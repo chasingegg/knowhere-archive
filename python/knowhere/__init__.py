@@ -19,6 +19,8 @@ def CreateIndex(index_name, simd_type="auto"):
         return IVF()
     if index_name == "ivf_pq":
         return IVFPQ()
+    if index_name == "ivf_pq_fastscan":
+        return IVFPQFASTSCAN()
     if index_name == "ivf_sq8":
         return IVFSQ()
     if index_name == "hnsw":

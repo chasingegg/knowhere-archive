@@ -63,6 +63,9 @@ class IVFPQConfAdapter : public IVFConfAdapter {
     CheckCPUPQParams(int64_t dimension, int64_t m);
 };
 
+class IVFPQFASTSCANConfAdapter : public IVFPQConfAdapter {
+};
+
 class BinIDMAPConfAdapter : public ConfAdapter {
  public:
     bool

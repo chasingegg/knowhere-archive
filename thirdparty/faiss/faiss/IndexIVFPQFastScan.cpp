@@ -534,7 +534,10 @@ void IndexIVFPQFastScan::search_dispatch_implem(
         const float* x,
         idx_t k,
         float* distances,
-        idx_t* labels) const {
+        idx_t* labels,
+        const IVFSearchParameters* params) const {
+    idx_t nprobe = params ? params->nprobe : nprobe;
+
     using Cfloat = typename std::conditional<
             is_max,
             CMax<float, int64_t>,
@@ -564,9 +567,9 @@ void IndexIVFPQFastScan::search_dispatch_implem(
     }
 
     if (impl == 1) {
-        search_implem_1<Cfloat>(n, x, k, distances, labels);
+        search_implem_1<Cfloat>(n, x, k, distances, labels, nprobe);
     } else if (impl == 2) {
-        search_implem_2<C>(n, x, k, distances, labels);
+        search_implem_2<C>(n, x, k, distances, labels, nprobe);
 
     } else if (impl >= 10 && impl <= 13) {
         size_t ndis = 0, nlist_visited = 0;
@@ -581,7 +584,8 @@ void IndexIVFPQFastScan::search_dispatch_implem(
                         labels,
                         impl,
                         &ndis,
-                        &nlist_visited);
+                        &nlist_visited,
+                        nprobe);
             } else {
                 search_implem_10<C>(
                         n,
@@ -591,7 +595,8 @@ void IndexIVFPQFastScan::search_dispatch_implem(
                         labels,
                         impl,
                         &ndis,
-                        &nlist_visited);
+                        &nlist_visited,
+                        nprobe);
             }
         } else {
             // explicitly slice over threads
@@ -630,7 +635,8 @@ void IndexIVFPQFastScan::search_dispatch_implem(
                             lab_i,
                             impl,
                             &ndis,
-                            &nlist_visited);
+                            &nlist_visited,
+                            nprobe);
                 } else {
                     search_implem_10<C>(
                             i1 - i0,
@@ -640,7 +646,8 @@ void IndexIVFPQFastScan::search_dispatch_implem(
                             lab_i,
                             impl,
                             &ndis,
-                            &nlist_visited);
+                            &nlist_visited,
+                            nprobe);
                 }
             }
         }
@@ -660,11 +667,35 @@ void IndexIVFPQFastScan::search(
         idx_t* labels,
         const BitsetView bitset) const {
     FAISS_THROW_IF_NOT(k > 0);
+    if (metric_type == METRIC_L2) {
+        search_dispatch_implem<true>(n, x, k, distances, labels, nullptr);
+    } else {
+        search_dispatch_implem<false>(n, x, k, distances, labels, nullptr);
+    }
+}
+
+void IndexIVFPQFastScan::search_thread_safe(
+        idx_t n,
+        const float* x,
+        idx_t k,
+        float* distances,
+        idx_t* labels,
+        const size_t nprobe,
+        const int parallel_mode,
+        const size_t max_codes,
+        const BitsetView bitset) const {
+    FAISS_THROW_IF_NOT(k > 0);
+    const size_t final_nprobe = std::min(nlist, nprobe);
+    FAISS_THROW_IF_NOT(final_nprobe > 0);
+    IVFSearchParameters params;
+    params.nprobe = final_nprobe;
+    params.max_codes = max_codes;
+    params.parallel_mode = parallel_mode;
 
     if (metric_type == METRIC_L2) {
-        search_dispatch_implem<true>(n, x, k, distances, labels);
+        search_dispatch_implem<true>(n, x, k, distances, labels, &params);
     } else {
-        search_dispatch_implem<false>(n, x, k, distances, labels);
+        search_dispatch_implem<false>(n, x, k, distances, labels, &params);
     }
 }
 
@@ -674,7 +705,8 @@ void IndexIVFPQFastScan::search_implem_1(
         const float* x,
         idx_t k,
         float* distances,
-        idx_t* labels) const {
+        idx_t* labels,
+        idx_t nprobe) const {
     FAISS_THROW_IF_NOT(orig_invlists);
 
     std::unique_ptr<idx_t[]> coarse_ids(new idx_t[n * nprobe]);
@@ -744,7 +776,8 @@ void IndexIVFPQFastScan::search_implem_2(
         const float* x,
         idx_t k,
         float* distances,
-        idx_t* labels) const {
+        idx_t* labels,
+        idx_t nprobe) const {
     FAISS_THROW_IF_NOT(orig_invlists);
 
     std::unique_ptr<idx_t[]> coarse_ids(new idx_t[n * nprobe]);
@@ -839,7 +872,8 @@ void IndexIVFPQFastScan::search_implem_10(
         idx_t* labels,
         int impl,
         size_t* ndis_out,
-        size_t* nlist_out) const {
+        size_t* nlist_out,
+        idx_t nprobe) const {
     memset(distances, -1, sizeof(float) * k * n);
     memset(labels, -1, sizeof(idx_t) * k * n);
 
@@ -959,7 +993,8 @@ void IndexIVFPQFastScan::search_implem_12(
         idx_t* labels,
         int impl,
         size_t* ndis_out,
-        size_t* nlist_out) const {
+        size_t* nlist_out,
+        idx_t nprobe) const {
     if (n == 0) { // does not work well with reservoir
         return;
     }

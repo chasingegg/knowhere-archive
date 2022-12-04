@@ -247,6 +247,23 @@ IndexHNSW::QueryImpl(int64_t n, const float* xq, int64_t k, float* distances, in
     hnswlib::SearchParam param{ef};
     bool transform = (index_->metric_type_ == 1);  // InnerProduct: 1
 
+    // for (unsigned int i = 0; i < n; ++i) {
+    //     auto single_query = xq + i * Dim();
+    //     auto rst = index_->searchKnn(single_query, k, bitset, &param, feder);
+    //     size_t rst_size = rst.size();
+    //     auto p_single_dis = distances + i * k;
+    //     auto p_single_id = labels + i * k;
+    //     for (size_t idx = 0; idx < rst_size; ++idx) {
+    //         const auto& [dist, id] = rst[idx];
+    //         p_single_dis[idx] = transform ? (1 - dist) : dist;
+    //         p_single_id[idx] = id;
+    //     }
+    //     for (size_t idx = rst_size; idx < k; idx++) {
+    //         p_single_dis[idx] = float(1.0 / 0.0);
+    //         p_single_id[idx] = -1;
+    //     }
+    // }
+
     std::vector<std::future<void>> futures;
     futures.reserve(n);
     for (unsigned int i = 0; i < n; ++i) {
@@ -293,6 +310,24 @@ IndexHNSW::QueryByRangeImpl(int64_t n, const float* xq, float*& distances, int64
     std::vector<std::vector<float>> result_dist_array(n);
     std::vector<size_t> result_size(n);
     std::vector<size_t> result_lims(n + 1);
+
+    // for (unsigned int i = 0; i < n; ++i) {
+    //     auto single_query = xq + i * Dim();
+    //     auto rst = index_->searchRange(single_query, radius, bitset, &param, feder);
+    //     auto elem_cnt = rst.size();
+    //     result_dist_array[i].resize(elem_cnt);
+    //     result_id_array[i].resize(elem_cnt);
+    //     for (size_t j = 0; j < elem_cnt; j++) {
+    //         auto& p = rst[j];
+    //         result_dist_array[i][j] = (is_ip ? (1 - p.first) : p.first);
+    //         result_id_array[i][j] = p.second;
+    //     }
+    //     result_size[i] = rst.size();
+
+    //     // filter range search result
+    //     FilterRangeSearchResultForOneNq(result_dist_array[i], result_id_array[i], is_ip, low_bound,
+    //                                     high_bound);
+    // }
 
     std::vector<std::future<void>> futures;
     futures.reserve(n);

@@ -22,6 +22,7 @@
 #include "index/vector_index/IndexHNSW.h"
 #include "index/vector_index/IndexIDMAP.h"
 #include "index/vector_index/IndexIVFPQ.h"
+#include "index/vector_index/IndexIVFPQFastScan.h"
 #include "index/vector_index/IndexIVFSQ.h"
 #include "index/vector_offset_index/IndexIVF_NM.h"
 
@@ -51,13 +52,18 @@ VecIndexFactory::CreateVecIndex(const IndexType& type, const IndexMode mode) {
             } else if (type == IndexEnum::INDEX_FAISS_IVFFLAT) {
                 return std::make_shared<VecIndexThreadPoolWrapper>(std::make_unique<IVF_NM>());
             } else if (type == IndexEnum::INDEX_FAISS_IVFPQ) {
-                return std::make_shared<VecIndexThreadPoolWrapper>(std::make_unique<IVFPQ>());
+                return std::make_shared<knowhere::IVFPQ>();
+                // return std::make_shared<VecIndexThreadPoolWrapper>(std::make_unique<IVFPQ>());
+            } else if (type == IndexEnum::INDEX_FAISS_IVFPQFASTSCAN) {
+                // return std::make_shared<knowhere::IVFPQFASTSCAN>();
+                return std::make_shared<VecIndexThreadPoolWrapper>(std::make_unique<IVFPQFASTSCAN>());
             } else if (type == IndexEnum::INDEX_FAISS_IVFSQ8) {
                 return std::make_shared<VecIndexThreadPoolWrapper>(std::make_unique<IVFSQ>());
             } else if (type == IndexEnum::INDEX_ANNOY) {
                 return std::make_shared<knowhere::IndexAnnoy>();
             } else if (type == IndexEnum::INDEX_HNSW) {
                 return std::make_shared<knowhere::IndexHNSW>();
+                // return std::make_shared<VecIndexThreadPoolWrapper>(std::make_unique<knowhere::IndexHNSW>());
             } else {
                 KNOWHERE_THROW_FORMAT("Invalid index type %s", std::string(type).c_str());
             }

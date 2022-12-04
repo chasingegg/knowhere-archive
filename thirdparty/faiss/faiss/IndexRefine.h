@@ -79,6 +79,18 @@ struct IndexRefineFlat : IndexRefine {
             float* distances,
             idx_t* labels,
             const BitsetView bitset = nullptr) const override;
+
+    void search_thread_safe(
+        idx_t n,
+        const float* x,
+        idx_t k,
+        float* distances,
+        idx_t* labels,
+        const size_t nprobe,
+        const int parallel_mode,
+        const size_t max_codes,
+        const size_t reorder_k,
+        const BitsetView bitset = nullptr) const;
 };
 
 } // namespace faiss
