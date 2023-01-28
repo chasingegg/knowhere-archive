@@ -611,7 +611,7 @@ namespace diskann {
       memset(data + i * rounded_dim + dim, 0, (rounded_dim - dim) * sizeof(T));
     }
     stream << " done." << std::endl;
-    LOG(DEBUG) << stream.str();
+    // LOG(DEBUG) << stream.str();
   }
 
 #ifdef EXEC_ENV_OLS
@@ -641,8 +641,8 @@ namespace diskann {
     reader.exceptions(std::ifstream::failbit | std::ifstream::badbit);
 
     try {
-      LOG(DEBUG) << "Reading (with alignment) bin file " << bin_file
-                 << " ...";
+      // LOG(DEBUG) << "Reading (with alignment) bin file " << bin_file
+                //  << " ...";
       reader.open(bin_file, std::ios::binary | std::ios::ate);
 
       uint64_t fsize = reader.tellg();

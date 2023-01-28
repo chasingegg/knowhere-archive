@@ -32,17 +32,23 @@ namespace knowhere {
 
 BinarySet
 IndexHNSW::Serialize(const Config& config) {
+    const std::string filename = GetFileName(config);
+    
     if (!index_) {
         KNOWHERE_THROW_MSG("index not initialize or trained");
     }
 
     try {
-        MemoryIOWriter writer;
-        index_->saveIndex(writer);
-        std::shared_ptr<uint8_t[]> data(writer.data_);
+        // MemoryIOWriter writer;
+        // index_->saveIndex(writer);
+        // std::shared_ptr<uint8_t[]> data(writer.data_);
 
+        // BinarySet res_set;
+        // res_set.Append("HNSW", data, writer.rp);
+
+        // hack: save index to disk
         BinarySet res_set;
-        res_set.Append("HNSW", data, writer.rp);
+        index_->saveIndex(filename);
         return res_set;
     } catch (std::exception& e) {
         KNOWHERE_THROW_MSG(e.what());
@@ -54,13 +60,16 @@ IndexHNSW::Load(const BinarySet& index_binary) {
     try {
         auto binary = index_binary.GetByName("HNSW");
 
-        MemoryIOReader reader;
-        reader.total = binary->size;
-        reader.data_ = binary->data.get();
+        // MemoryIOReader reader;
+        // reader.total = binary->size;
+        // reader.data_ = binary->data.get();
 
-        hnswlib::SpaceInterface<float>* space = nullptr;
-        index_ = std::make_unique<hnswlib::HierarchicalNSW<float>>(space);
-        index_->loadIndex(reader);
+        // hnswlib::SpaceInterface<float>* space = nullptr;
+        // index_ = std::make_unique<hnswlib::HierarchicalNSW<float>>(space);
+        // index_->loadIndex(reader);
+
+        // hack: load index from disk
+        index_->loadIndex(binary->location, nullptr);
     } catch (std::exception& e) {
         KNOWHERE_THROW_MSG(e.what());
     }
@@ -72,7 +81,9 @@ IndexHNSW::Load(const BinarySet& index_binary) {
 void
 IndexHNSW::Train(const DatasetPtr& dataset_ptr, const Config& config) {
     try {
-        GET_TENSOR_DATA_DIM(dataset_ptr)
+        // GET_TENSOR_DATA_DIM(dataset_ptr)
+        int64_t dim = GetMetaDim(config);
+        int64_t rows = GetMetaRows(config);
 
         hnswlib::SpaceInterface<float>* space;
         std::string metric_type = GetMetaMetricType(config);

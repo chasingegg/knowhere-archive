@@ -236,6 +236,17 @@ CreateConfig(const std::string& str) {
     return cfg;
 }
 
+// hack: create binaryset, similar to config
+knowhere::BinarySet
+CreateBinarySet(const std::string& index_name, const std::string& str) {
+    auto cfg = knowhere::Config::parse(str);
+    BinarySet binaryset;
+    for (auto &[k, v]: cfg.items()) {
+        binaryset.Append(index_name, v);
+    }
+    return binaryset;
+}
+
 void
 SetSimdType(const std::string& str) {
     if (str == "auto") {

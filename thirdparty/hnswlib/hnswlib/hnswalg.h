@@ -659,9 +659,9 @@ class HierarchicalNSW : public AlgorithmInterface<dist_t> {
         readBinaryPOD(input, mult_);
         readBinaryPOD(input, ef_construction_);
 
-        data_size_ = s->get_data_size();
-        fstdistfunc_ = s->get_dist_func();
-        dist_func_param_ = s->get_dist_func_param();
+        // data_size_ = s->get_data_size();
+        // fstdistfunc_ = s->get_dist_func();
+        // dist_func_param_ = s->get_dist_func_param();
 
         auto pos = input.tellg();
 

@@ -23,6 +23,7 @@ namespace knowhere {
 struct Binary {
     std::shared_ptr<uint8_t[]> data;
     int64_t size = 0;
+    std::string location;
 };
 using BinaryPtr = std::shared_ptr<Binary>;
 
@@ -50,6 +51,14 @@ class BinarySet {
         auto binary = std::make_shared<Binary>();
         binary->data = data;
         binary->size = size;
+        binary_map_[name] = std::move(binary);
+    }
+
+    // hack: add location to load hnsw index
+    void
+    Append(const std::string& name, const std::string& location) {
+        auto binary = std::make_shared<Binary>();
+        binary->location = location;
         binary_map_[name] = std::move(binary);
     }
 

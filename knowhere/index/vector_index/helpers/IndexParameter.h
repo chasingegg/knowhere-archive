@@ -22,6 +22,7 @@
 namespace knowhere {
 
 namespace meta {
+constexpr const char* FILE_NAME = "file_name";
 constexpr const char* METRIC_TYPE = "metric_type";
 constexpr const char* DIM = "dim";
 constexpr const char* TENSOR = "tensor";
@@ -101,6 +102,9 @@ SetValueToConfig(Config& cfg, const std::string& key, const T value) {
 
 ///////////////////////////////////////////////////////////////////////////////
 // APIs to access meta
+// hack: get file name from knowhere config
+DEFINE_CONFIG_GETTER(GetFileName, meta::FILE_NAME, std::string)
+
 DEFINE_CONFIG_GETTER(GetMetaMetricType, meta::METRIC_TYPE, std::string)
 DEFINE_CONFIG_SETTER(SetMetaMetricType, meta::METRIC_TYPE, std::string)
 
