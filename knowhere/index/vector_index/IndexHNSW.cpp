@@ -261,10 +261,10 @@ IndexHNSW::QueryImpl(int64_t n, const float* xq, int64_t k, float* distances, in
                 p_single_dis[idx] = transform ? (1 - dist) : dist;
                 p_single_id[idx] = id;
             }
-            for (size_t idx = rst_size; idx < k; idx++) {
-                p_single_dis[idx] = float(1.0 / 0.0);
-                p_single_id[idx] = -1;
-            }
+            // for (size_t idx = rst_size; idx < k; idx++) {
+            //     p_single_dis[idx] = float(1.0 / 0.0);
+            //     p_single_id[idx] = -1;
+            // }
         }));
     }
 
