@@ -135,8 +135,9 @@ IndexHNSW::Query(const DatasetPtr& dataset_ptr, const Config& config, const fais
     GET_TENSOR_DATA_DIM(dataset_ptr)
 
     auto k = GetMetaTopk(config);
-    auto p_id = new int64_t[k * rows];
-    auto p_dist = new float[k * rows];
+    auto ef = GetIndexParamEf(config);
+    auto p_id = new int64_t[std::min(ef, k) * rows];
+    auto p_dist = new float[std::min(ef, k) * rows];
 
     feder::hnsw::FederResultUniq feder_result;
 
