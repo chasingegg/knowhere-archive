@@ -1139,10 +1139,10 @@ class HierarchicalNSW : public AlgorithmInterface<dist_t> {
         size_t ef = param ? param->ef_ : this->ef_;
         if (!bitset.empty()) {
             top_candidates =
-                searchBaseLayerST<true, true>(currObj, query_data, std::max(ef, k), bitset, param, feder_result);
+                searchBaseLayerST<true, true>(currObj, query_data, ef, bitset, param, feder_result);
         } else {
             top_candidates =
-                searchBaseLayerST<false, true>(currObj, query_data, std::max(ef, k), bitset, param, feder_result);
+                searchBaseLayerST<false, true>(currObj, query_data, ef, bitset, param, feder_result);
         }
         std::vector<std::pair<dist_t, labeltype>> result;
         size_t len = std::min(k, top_candidates.size());
