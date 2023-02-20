@@ -238,7 +238,7 @@ HNSWConfAdapter::CheckTrain(Config& cfg, const IndexMode mode) {
 
 bool
 HNSWConfAdapter::CheckSearch(Config& cfg, const IndexType type, const IndexMode mode) {
-    CheckIntegerRange(cfg, indexparam::EF, GetMetaTopk(cfg), HNSW_MAX_EF);
+    CheckIntegerRange(cfg, indexparam::EF, 1, HNSW_MAX_EF);
     return ConfAdapter::CheckSearch(cfg, type, mode);
 }
 
