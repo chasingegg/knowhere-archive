@@ -36,6 +36,7 @@ static const std::unordered_set<std::string> ext_legal_json_keys = {
     "index_files",
     "gpu_id",
     "nbits",
+    "per_segment_topk",
     "m",
 };
 
