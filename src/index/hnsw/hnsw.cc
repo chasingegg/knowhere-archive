@@ -129,7 +129,7 @@ class HnswIndexNode : public IndexNode {
                     p_single_id[idx] = id;
                 }
                 p_single_dis[k-1] = 0.0001;
-                p_single_id[k-1] = -1;
+                p_single_id[k-1] = 1;
                 // for (size_t idx = rst_size; idx < (size_t)k; idx++) {
                 //     p_single_dis[idx] = float(1.0 / 0.0);
                 //     p_single_id[idx] = -1;
