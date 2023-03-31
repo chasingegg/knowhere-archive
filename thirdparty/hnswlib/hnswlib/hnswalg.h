@@ -242,7 +242,7 @@ class HierarchicalNSW : public AlgorithmInterface<dist_t> {
     mutable std::atomic<long> metric_distance_computations;
     mutable std::atomic<long> metric_hops;
 
-    bool isSameVector(void *data_point, char *pp, size_t dim) {
+    bool isSameVector(const void *data_point, char *pp, size_t dim) const {
         float *d1 = (float *)data_point;
         float *d2 = (float *)pp;
         for (int i = 0; i < dim; ++i) {
