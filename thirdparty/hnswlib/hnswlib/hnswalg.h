@@ -242,6 +242,17 @@ class HierarchicalNSW : public AlgorithmInterface<dist_t> {
     mutable std::atomic<long> metric_distance_computations;
     mutable std::atomic<long> metric_hops;
 
+    bool isSameVector(const void *data_point, char *pp, size_t dim) {
+        float *d1 = (float *)data_point;
+        float *d2 = (float *)pp;
+        for (int i = 0; i < dim; ++i) {
+            if (d1[i] != d2[i]) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     template <bool has_deletions, bool collect_metrics = false>
     std::vector<std::pair<dist_t, tableint>>
     searchBaseLayerST(tableint ep_id, const void* data_point, size_t ef, const knowhere::BitsetView bitset,
@@ -253,6 +264,9 @@ class HierarchicalNSW : public AlgorithmInterface<dist_t> {
         NeighborSet retset(ef);
 
         if (!has_deletions || !bitset.test((int64_t)ep_id)) {
+            dist_t dist = fstdistfunc_(data_point, getDataByInternalId(ep_id), dist_func_param_);
+            retset.insert(Neighbor(ep_id, dist, Neighbor::kValid));
+        } else if (!isSameVector(data_point, getDataByInternalId(ep_id), *((size_t*)dist_func_param_))) {
             dist_t dist = fstdistfunc_(data_point, getDataByInternalId(ep_id), dist_func_param_);
             retset.insert(Neighbor(ep_id, dist, Neighbor::kValid));
         } else {
@@ -295,6 +309,15 @@ class HierarchicalNSW : public AlgorithmInterface<dist_t> {
                 if (has_deletions && bitset.test((int64_t)v)) {
                     status = Neighbor::kInvalid;
                 }
+
+                if (isSameVector(data_point, getDataByInternalId(v), *((size_t*)dist_func_param_))) {
+                    status = Neighbor::kInvalid;
+                }
+
+                // // change the logic here, not push the invalid node to the list
+                // if (status == Neighbor::kInvalid) {
+                //     continue;
+                // }
 
                 Neighbor nn(v, dist, status);
                 if (retset.insert(nn)) {
