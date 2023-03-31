@@ -263,14 +263,15 @@ class HierarchicalNSW : public AlgorithmInterface<dist_t> {
         auto& visited = visited_list_pool_->getFreeVisitedList();
         NeighborSet retset(ef);
 
-        if (!has_deletions || !bitset.test((int64_t)ep_id)) {
-            dist_t dist = fstdistfunc_(data_point, getDataByInternalId(ep_id), dist_func_param_);
-            retset.insert(Neighbor(ep_id, dist, Neighbor::kValid));
-        } else if (!isSameVector(data_point, getDataByInternalId(ep_id), *((size_t*)dist_func_param_))) {
-            dist_t dist = fstdistfunc_(data_point, getDataByInternalId(ep_id), dist_func_param_);
-            retset.insert(Neighbor(ep_id, dist, Neighbor::kValid));
-        } else {
+        if (isSameVector(data_point, getDataByInternalId(ep_id), *((size_t*)dist_func_param_))) {
             retset.insert(Neighbor(ep_id, std::numeric_limits<dist_t>::max(), Neighbor::kInvalid));
+        } else {
+            if (!has_deletions || !bitset.test((int64_t)ep_id)) {
+                dist_t dist = fstdistfunc_(data_point, getDataByInternalId(ep_id), dist_func_param_);
+                retset.insert(Neighbor(ep_id, dist, Neighbor::kValid));
+            } else {
+                retset.insert(Neighbor(ep_id, std::numeric_limits<dist_t>::max(), Neighbor::kInvalid));
+            }
         }
 
         visited[ep_id] = true;
