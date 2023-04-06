@@ -315,10 +315,10 @@ class HierarchicalNSW : public AlgorithmInterface<dist_t> {
                     status = Neighbor::kInvalid;
                 }
 
-                // change the logic here, not push the invalid node to the list
-                if (status == Neighbor::kInvalid) {
-                    continue;
-                }
+                // // change the logic here, not push the invalid node to the list
+                // if (status == Neighbor::kInvalid) {
+                //     continue;
+                // }
 
                 Neighbor nn(v, dist, status);
                 if (retset.insert(nn)) {
