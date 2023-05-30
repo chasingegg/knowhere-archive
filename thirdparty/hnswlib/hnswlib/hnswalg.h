@@ -6,6 +6,7 @@
 #include <atomic>
 #include <list>
 #include <random>
+#include <iostream>
 #include <unordered_set>
 
 #include "common/Utils.h"
@@ -24,7 +25,7 @@
 namespace hnswlib {
 typedef unsigned int tableint;
 typedef unsigned int linklistsizeint;
-constexpr float kHnswBruteForceFilterRate = 0.93f;
+constexpr float kHnswBruteForceFilterRate = 0.89f;
 
 template <typename dist_t>
 class HierarchicalNSW : public AlgorithmInterface<dist_t> {
@@ -1101,8 +1102,13 @@ class HierarchicalNSW : public AlgorithmInterface<dist_t> {
         if (cur_element_count == 0)
             return result;
 
+        if (bitset.empty()) {
+            std::cout << "no filter!" << param->ef_ << " " << k << std::endl;
+        }
+
         if (!bitset.empty()) {
             const auto bs_cnt = bitset.count();
+            std::cout << param->ef_ << " " << k << " bs_cnt: " << bs_cnt << " cnt: " << cur_element_count << " f ratio: " << float(bs_cnt) / cur_element_count << std::endl;
             if (bs_cnt == cur_element_count) return {};
             if (bs_cnt >= (cur_element_count * kHnswBruteForceFilterRate)) {
                 assert(cur_element_count == bitset.size());
